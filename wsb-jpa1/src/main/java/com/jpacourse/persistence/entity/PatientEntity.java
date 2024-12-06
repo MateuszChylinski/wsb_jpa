@@ -1,13 +1,9 @@
 package com.jpacourse.persistence.entity;
 
 import java.time.LocalDate;
+import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "PATIENT")
@@ -33,6 +29,24 @@ public class PatientEntity {
 
 	@Column(nullable = false)
 	private LocalDate dateOfBirth;
+
+	/**
+	 * Relation ManyToOne, because multiple patients can share one apartment.
+	 * Fetch type is set to lazy, so the data will be prepared on demand.
+	 */
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ADDRESS_ID", nullable = false)
+	private AddressEntity addressEntity;
+
+	/**
+	 * Cascades are set to give all available operations
+	 * Orphan removal is set to true, so the database will delete specific medical treatment, or treatments after patient will be deleted
+	 * Fetch type is set to LAzy, so the data will be on demand.
+	 */
+	@OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "VISIT_ID")
+	private List<VisitEntity> visitEntities;
 
 	public Long getId() {
 		return id;
@@ -90,4 +104,19 @@ public class PatientEntity {
 		this.dateOfBirth = dateOfBirth;
 	}
 
+	public AddressEntity getAddressEntity() {
+		return addressEntity;
+	}
+
+	public void setAddressEntity(AddressEntity addressEntity) {
+		this.addressEntity = addressEntity;
+	}
+
+	public List<VisitEntity> getVisitEntities() {
+		return visitEntities;
+	}
+
+	public void setVisitEntities(List<VisitEntity> visitEntities) {
+		this.visitEntities = visitEntities;
+	}
 }

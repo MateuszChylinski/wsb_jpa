@@ -2,14 +2,8 @@ package com.jpacourse.persistence.entity;
 
 import com.jpacourse.persistence.enums.Specialization;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "DOCTOR")
@@ -36,6 +30,24 @@ public class DoctorEntity {
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private Specialization specialization;
+
+	/**
+	 * Cascades are set to give all available operations
+	 * Orphan removal is set to true, so the database will delete specific medical treatment, or treatments after patient will be deleted
+	 * Fetch type is set to LAzy, so the data will be on demand.
+	 */
+	@OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "VISIT_ID", nullable = false)
+	private List<VisitEntity> visits;
+
+	/**
+	 * Relation ManyToOne, because multiple doctors can share one apartment.
+	 * Fetch type is set to lazy, so the data will be prepared on demand.
+	 */
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ADDRESS_ID", nullable = false)
+	private AddressEntity address;
 
 	public Long getId() {
 		return id;
@@ -93,4 +105,19 @@ public class DoctorEntity {
 		this.specialization = specialization;
 	}
 
+	public AddressEntity getAddress() {
+		return address;
+	}
+
+	public void setAddress(AddressEntity address) {
+		this.address = address;
+	}
+
+	public List<VisitEntity> getVisits() {
+		return visits;
+	}
+
+	public void setVisits(List<VisitEntity> visits) {
+		this.visits = visits;
+	}
 }
