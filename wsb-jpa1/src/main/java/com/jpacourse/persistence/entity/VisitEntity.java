@@ -1,13 +1,11 @@
 package com.jpacourse.persistence.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "VISIT")
@@ -21,6 +19,27 @@ public class VisitEntity {
 
 	@Column(nullable = false)
 	private LocalDateTime time;
+
+	/**
+	 * Relation ManyToOne, because one doctor can have many visits
+	 * Fetch type is set to lazy, so the data will be prepared on demand.
+	 */
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DOCTOR_ID", nullable = false)
+	private DoctorEntity doctorEntity;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "PATIENT_ID", nullable = false)
+	private PatientEntity patientEntity;
+
+	/**
+	 * Cascades are set to give all available operations
+	 * Orphan removal is set to true, so the database will delete specific medical treatment, or treatments after patient will be deleted
+	 */
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	@JoinColumn(name = "MEDICAL_TREATMENT_ID")
+	private List<MedicalTreatmentEntity> medicalTreatmentEntities;
 
 	public Long getId() {
 		return id;
@@ -46,4 +65,28 @@ public class VisitEntity {
 		this.time = time;
 	}
 
+	public DoctorEntity getDoctorEntity() {
+		return doctorEntity;
+	}
+
+	public void setDoctorEntity(DoctorEntity doctorEntity) {
+		this.doctorEntity = doctorEntity;
+	}
+
+	public PatientEntity getPatientEntity() {
+		return patientEntity;
+	}
+
+	public void setPatientEntity(PatientEntity patientEntity) {
+		this.patientEntity = patientEntity;
+	}
+
+	public List<MedicalTreatmentEntity> getMedicalTreatmentEntities() {
+		return medicalTreatmentEntities;
+	}
+
+	public void setMedicalTreatmentEntities(List<MedicalTreatmentEntity> medicalTreatmentEntities) {
+		this.medicalTreatmentEntities = medicalTreatmentEntities;
+	}
 }
+

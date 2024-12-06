@@ -1,10 +1,7 @@
 package com.jpacourse.persistence.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "ADDRESS")
@@ -13,6 +10,20 @@ public class AddressEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
+	/**
+	 * Cascades are set to give all available operations
+	 * Orphan removal is set to true, so the database will delete specific medical treatment, or treatments after patient will be deleted
+	 * Fetch type is set to LAzy, so the data will be on demand.
+	 */
+
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	@JoinColumn(name = "DOCTOR_ID", nullable = false)
+	private List<DoctorEntity> doctors;
+
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	@JoinColumn(name = "PATIENT_ID", nullable = false)
+	private List<PatientEntity> patientEntities;
 
 	private String city;
 
@@ -62,4 +73,19 @@ public class AddressEntity {
 		this.postalCode = postalCode;
 	}
 
+	public List<DoctorEntity> getDoctors() {
+		return doctors;
+	}
+
+	public void setDoctors(List<DoctorEntity> doctors) {
+		this.doctors = doctors;
+	}
+
+	public List<PatientEntity> getPatientEntities() {
+		return patientEntities;
+	}
+
+	public void setPatientEntities(List<PatientEntity> patientEntities) {
+		this.patientEntities = patientEntities;
+	}
 }
